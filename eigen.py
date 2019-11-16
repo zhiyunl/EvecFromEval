@@ -1,7 +1,19 @@
+'''
+@Author: zhiyunl
+@Date: 2019-11-16 16:10:47
+@LastEditors: zhiyunl
+@LastEditTime: 2019-11-16 16:18:08
+@Description: 
+a new method to calculate eigenvector, inspired by papers below:
+    1. "Eigenvectors from Eigenvalues" 
+        url:https://arxiv.org/pdf/1908.03795.pdf
+    2. "Eigenvalues: the Rosetta Stone for Neutrino Oscillations in Matter" 
+        url: https://arxiv.org/pdf/1907.02534.pdf
+
+'''
+
 import cmath
-
 import numpy as np
-
 
 class evecfromeval():
     vals = 0
@@ -20,7 +32,8 @@ class evecfromeval():
 
     def evector(self, mm):
         self.vecs = []
-        submm = np.array([np.delete(np.delete(mm, j, 1), j, 0) for j in range(mm.shape[0])])
+        submm = np.array([np.delete(np.delete(mm, j, 1), j, 0)
+                          for j in range(mm.shape[0])])
         print(submm)
         subevals = np.array([self.evalue(submm[j]) for j in range(len(submm))])
         print(subevals)
@@ -30,8 +43,8 @@ class evecfromeval():
         for j in range(mm.shape[0]):
             # square of vector j
             v_a2 = [cmath.sqrt((self.vals[i] - subevals[j][0]) * (self.vals[i] - subevals[j][1]) / (
-                        self.vals[i] - self.vals[(i + 1) % 3]) / (self.vals[i] - self.vals[(i + 2) % 3])) for i in
-                    range(3)]
+                self.vals[i] - self.vals[(i + 1) % 3]) / (self.vals[i] - self.vals[(i + 2) % 3])) for i in
+                range(3)]
             # this formula can be simplified using trace and determinant as in the paper
             # numerator : using the sum and product of the eigenvalues
             #       eigenvalues of submatrix do not have to be explictly calculated
@@ -41,6 +54,9 @@ class evecfromeval():
         # compare
         _, real_vec = np.linalg.eig(mm)
         print(real_vec)
+        # the absolute number of eigenvectors are correct, no normalization needed!
+        # @TODO expanding the matrix into larger size, only 3x3 now
+        # @TODO implement eigenvalue calculating strategy without numpy
         # print(np.allclose(real_vec,self.vecs))
         # print(self.normalize(np.array(self.vecs)))
 
